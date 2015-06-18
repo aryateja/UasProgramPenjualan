@@ -1,0 +1,503 @@
+
+package uas;
+import java.util.*;
+import java.io.*;
+import java.text.*;
+public class Uas {
+    public static void main(String [] argx)throws IOException{
+   BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    //Database tanggal dan waktu user awal
+ SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+ Date date1 = new Date();
+ String date = dateFormat.format(date1); 
+   //nomer order
+    int index=0;
+    //auto ingkremen
+   int idk=0;
+   int error=1;
+   //pilihan menu
+   int max=0;
+   int pilihan = 0;
+   int pilihan1 = 0;
+   int pilihan2 = 0;
+   int pilihan4 =0;
+   int gagal=0;
+   int ulang=0;
+   int idDtransaksi;
+   //variable untuk barang
+   double totalharian=0.0;
+   double totaltransaksi=0.0;
+   double keuntungan=0.0;
+   double totalbarang2=0.0;
+   double totalbarang=0.0;
+   double uang;
+   double akhir;
+   double stock=0;
+   double belibarang;
+   double subbarang;
+   double hargabarang;
+   double hargajual=0;
+   double hargabeli=0;
+   double totalDtransaksi=0.0;
+   int cari=0;
+   int pesanan=0;
+   double jumlah=0;
+   String namaBarang="";
+   //untuk user
+  String cekuser="";
+  String cekpass="";
+  String jawab="";
+  boolean log = false;
+  //vektor
+  Vector<Dtransaksi> dtransaksi = new Vector<Dtransaksi>();
+  Vector<Transaksi> transaksi = new Vector<Transaksi>();
+  Vector<barang> barang = new Vector<barang>();
+  boolean exit=false;
+  barang.add(new barang(1,"minyak goreng",5.0,22000.00,22500.00));
+  barang.add(new barang(2,"minyak rambut",7.0,18000.00,19500.00));
+  barang.add(new barang(3,"tepung segitiga",5.0,10000.0,12500.0));
+   String user="arya";
+   String pass="12345aja";
+   do{
+       ulang++;
+       
+  System.out.print("Username : ");
+  cekuser=br.readLine();
+  System.out.print("Password : ");
+  cekpass=br.readLine();
+  if((cekuser.equalsIgnoreCase(user))&& (cekpass.equalsIgnoreCase(pass)))
+  {
+      log=true;
+  }
+  else { 
+  System.out.println("User atau pasword anda salah");
+  }
+  if(ulang>=4){
+      System.out.println("Anda melebihi batas login,Silahkan hubungi administrator");
+  System.exit(0);
+  }
+  
+  }while(log!=true);
+   
+   if(log = true){
+   do{
+       System.out.println("");
+       System.out.println("Selamat datang "+user);
+       System.out.println("Anda Masuk Sebagai Id Login");
+       System.out.println("");
+       System.out.println("||||||||||||||||||||||||||||");
+       System.out.println("      Program Penjualan     ");
+       System.out.println(" PT.Sembako Sabar Sejahtera ");
+       System.out.println("   Jl. kedung Baruk No.98   ");
+       System.out.println("||||||||||||||||||||||||||||");
+       
+       
+       System.out.println("1. Transaksi");
+       System.out.println("2. Maintenance Barang");
+       System.out.println("3. Laporan Penjualan");
+       System.out.println("4. Log out");
+       System.out.print("Masukkan Pilihan (1-4) : ");
+       pilihan = Integer.parseInt(br.readLine());
+       
+   switch(pilihan){
+                            case 1:
+                                //idk digunakan perumpamaan barang brguna untuk pencarian barang  brupa kode maupun nama barang
+                                idk=0;
+                                //index diperumpamakan untuk trnsaksi lebih dari 1x dan kode brang berubah otomatis
+                                index=transaksi.size()+1;
+                                for(int p=0;p<transaksi.size();p++)
+                                {                                  //mengambil dari kelas transaksi
+                                    if(idk==transaksi.elementAt(p).getIdtransaksi()){
+                                    index++;
+                                    }
+                                }
+                                System.out.println("id transaksi  :"+index);
+                                System.out.println("Id Login      :"+cekuser);
+                                System.out.println("Tanggal/Waktu :"+date);
+                                transaksi.add(new Transaksi(index,date,cekuser));
+                                System.out.println();
+                                do{
+                                System.out.println("Pencarian Berupa :");
+                                System.out.println("1. Kode Barang");
+                                System.out.println("2. Nama barang");
+                                System.out.print("Masukkan Pilihan 1-2 :");
+                                jawab=br.readLine();
+                                System.out.println("");
+                                System.out.println("");
+                                //ketika pncarian dengan Kode(hampir sama dengan case tapi beda cara)
+                                if(jawab.equalsIgnoreCase("1")){
+                                do{
+                              System.out.print("Masukkan Kode Barang : ");
+                              cari = Integer.parseInt(br.readLine());
+                                  for(int i=0;i<barang.size();i++){ 
+                                      //mengambil dari class barang dan getid berfungsi sebagai database
+                                    if(cari==barang.elementAt(i).getIdBarang()){
+                                    idk = i;                     //maksut get  idBarang ialah dimaksutkan kode pada barang
+                                    error=1;
+                                    log=true;
+                                    ulang=5;
+                                    }
+                                    else{
+                                    log=false;
+                                    error=0;
+                                    }
+                                  }
+                                if(ulang!=5) {
+                                    log=false;
+                                    System.out.println("Kode Yang Anda Masukkan tidak ada");
+                                    }
+                              }while(log!=true && ulang!=5);
+                              log=true;
+                                }
+                                //Pencarian dengan nama barang
+                                if(jawab.equalsIgnoreCase("2")){
+                                    do{
+                                    System.out.print("Masukkan Nama Barang : ");
+                                    jawab=br.readLine();
+                                        for(int i=0;i<barang.size();i++){               //get nama diambil dari kelas barang
+                                          if(jawab.equalsIgnoreCase(barang.elementAt(i).getnama())){
+                                          idk = i; 
+                                          error=1;
+                                          log=true;
+                                          ulang=5;
+                                          }
+                                          else{
+                                          log=false;
+                                          error=0;
+                                          }
+                                        }
+                                      if(ulang!=5) {
+                                          log=false;
+                                          System.out.println("Nama Barang Yang Anda Masukkan tidak ada");
+                                          }
+                                    }while(log!=true && ulang!=5);
+                                    log=true;
+                                      }
+                                    //pesanan
+                                    pesanan++;
+                                  subbarang=0.0;
+                                  hargabarang=0.0;
+                                  System.out.println();
+                                  System.out.println();
+                                  System.out.println("Kode\tNama Barang\t\tStock\t\tHarga");
+                                  //semua diambil dari class "barang" kode mengambil di getIdBarang             "Nama di getnama"                      "stok di getstock"            "harga jual mengambil di get hargajual"                                                                                             
+                                  System.out.println("61900-"+barang.elementAt(idk).getIdBarang()+"\t"+barang.elementAt(idk).getnama()+"\t\t"+barang.elementAt(idk).getstock()+"\t\t"+barang.elementAt(idk).gethargajual());
+                                  ulang=0;
+                                  do{
+                                  log=true;
+                                  System.out.print("Masukkan Jumlah : ");
+                                  jumlah = Double.parseDouble(br.readLine());
+                                  if(barang.elementAt(idk).getstock()==0 || jumlah>barang.elementAt(idk).getstock()){
+                                  System.out.println("Stock barang tidak menyukupi atau habis,Silahkan masukkan kurang atau sama dengan " +barang.elementAt(idk).getstock() +" (kg)");
+                                  log=!true;
+                                  ulang++;
+                                  }
+                                  }while(log!=true && ulang!=3);
+                                  if(ulang==3){
+                                  jumlah=0.0;
+                                  }
+                                  barang.elementAt(idk).minOrder(jumlah);
+                                  idDtransaksi=barang.elementAt(idk).getIdBarang();
+                                  namaBarang=barang.elementAt(idk).getnama();
+                                  hargabarang=barang.elementAt(idk).gethargajual();
+                                  belibarang=barang.elementAt(idk).gethargabeli();
+                                  subbarang=hargabarang*jumlah;
+                                  totalDtransaksi+=subbarang;
+                                  
+                                  dtransaksi.add(new Dtransaksi(index,idDtransaksi,namaBarang,jumlah,hargabarang,belibarang,subbarang,totalDtransaksi));
+          
+          System.out.print("Tambah Transaksi ? (Y / N) : ");
+          jawab = br.readLine(); 
+          }while(!jawab.equalsIgnoreCase("n"));
+          System.out.println();
+          System.out.println();
+          System.out.println("-----------------------------------------------------");
+          System.out.println("Order No.        : "+index);
+          System.out.println("Id Login         : "+cekuser);
+          System.out.println("Tanggal&waktu    : "+date);
+          System.out.println("-----------------------------------------------------");
+          System.out.println();
+          System.out.println("ID\tNama Buah\t\tHarga\t\tSub Total");
+          for(int o=max;o<pesanan;o++){
+          System.out.println(dtransaksi.elementAt(o).getIdDtransaksi()+"\t"+dtransaksi.elementAt(o).getNamabarang()+"\t\t"+dtransaksi.elementAt(o).getHargabarang()+"\t\t"+dtransaksi.elementAt(o).getSubDtransaksi());
+          }                                                //total transaksi diambil dari hasil subbarang
+          System.out.println("Total yang harus dibayar : "+totalDtransaksi);
+          do{
+          System.out.print("Masukkan Uang :");
+          uang = Double.parseDouble(br.readLine());
+          if(uang<totalDtransaksi){
+          System.out.println("Uang yang Anda masukkan tidak cukup, silahkan coba lagi!");
+          log=false;
+          }
+          else{
+          log=true;
+          }
+          }while(log!=true);
+          akhir = uang-totalDtransaksi;
+            //Keluaran Report
+          System.out.println();
+          System.out.println();
+          System.out.println("-----------------------------------------------------");
+          System.out.println("Order No.      : "+index);
+          System.out.println("Id Login       : "+cekuser);
+          System.out.println("Tanggal        : "+date);
+           System.out.println("-----------------------------------------------------");
+           System.out.println();
+          System.out.println("ID\tNama Buah\t\tHarga\t\tSub Total");
+          for(int i=max;i<pesanan;i++){
+          System.out.println(dtransaksi.elementAt(i).getIdDtransaksi()+"\t"+dtransaksi.elementAt(i).getNamabarang()+"\t\t"+dtransaksi.elementAt(i).getHargabarang()+"\t\t"+dtransaksi.elementAt(i).getSubDtransaksi());
+          }
+          max=pesanan;
+          System.out.println();
+          System.out.println();
+          System.out.println("Total Yang Harus dibayar : Rp." +totalDtransaksi);
+          System.out.println("Uang yang dibayarkan : Rp."+uang);
+          if(akhir==0){
+          System.out.println("Tidak ada Kembalian");
+          }
+          else{                              //hasil akhiir dikarenakan jumlah uang dikurangi totalDtransaksi
+          System.out.println("Kembalian Rp. "+akhir);
+          }
+          
+          System.out.println();
+          System.out.println();
+          System.out.println();
+          totalDtransaksi=0.0;                    
+                               
+                                   
+                            break;
+                                
+                            case 2:
+                                 do{
+                                     System.out.println("");
+                                    System.out.println("1. Tambah barang");
+                                    System.out.println("2. Update Barang");
+                                    System.out.println("3. Hapus Barang");
+                                    System.out.println("4. Lihat barang");
+                                    System.out.println("5. kembali");
+                                    System.out.print("Masukkan Pilihan (1-5) : ");
+                                    pilihan1 = Integer.parseInt(br.readLine());
+                                    switch(pilihan1)
+                                    {
+                                        case 1:
+                                            //Tambah Data Barang
+                                            String namabarang = "";
+                                            double stokbarang = 0;
+                                            hargabeli = 0;
+                                            hargajual = 0;
+                                            idk = barang.size()+1;
+                                            for(int i =0; i<barang.size();i++){
+                                            if(idk == barang.elementAt(i).getIdBarang()){
+                                            idk++;
+                                            }
+                                            }
+                                            System.out.print("Masukkan Nama Barang :");
+                                            namabarang=br.readLine();
+                                            System.out.print("Masukkan Stok barang yang ditambahkan:");
+                                            stokbarang=Double.parseDouble(br.readLine());
+                                            System.out.print("Masukkan harga beli (kulaan) :");
+                                            hargabeli=Double.parseDouble(br.readLine());
+                                            System.out.print("Masukkan harga jual :");
+                                            hargajual=Double.parseDouble(br.readLine());
+                                            System.out.print("Apakah ingin tambah barang lagi?(y/n) :");
+                                            barang.add(new barang(idk,namabarang,stokbarang ,hargabeli,hargajual));
+                                        break;
+                                        case 2:
+                                            //Update Data Barang
+                                            do{
+                                            do{
+                                                error=0;
+                                                ulang=0;
+                                               System.out.print("Cari Nama Barang yang akan diupdate : ");
+                                               namabarang = br.readLine();
+                                               for(int a=0;a<barang.size();a++){
+                                                 if(namabarang.equalsIgnoreCase(barang.elementAt(a).getnama())){
+                                                 idk = a;
+                                                 error=1;
+                                                 ulang=5;
+                                                 }
+                                               }
+                                                if(error==0) {
+                                                 System.out.println("Nama Barang yang Anda Masukkan Tidak Ada");
+                                                 }
+                                             }while(ulang!=5);
+                                            if(error==1)
+                                            {
+                                            System.out.print("Nama Barang ("+barang.elementAt(idk).getnama());
+                                            
+                                            do{
+                                            System.out.println(") Yang akan diupdate :");
+                                            System.out.println("1. Setok");
+                                            System.out.println("2. harga beli(kulaan)");
+                                            System.out.println("3. harga jual");
+                                            System.out.println("4. save :");
+                                            System.out.print("Masukkan Pilihan (1-4) : ");
+                                            pilihan4 = Integer.parseInt(br.readLine());
+                                            switch(pilihan4)
+                                            {
+                                                case 1:
+                                                    System.out.println("Jumlah setok update : ");
+                                                     stock = Double.parseDouble(br.readLine());
+                                                     barang.elementAt(idk).setStock(stock);
+                                                    
+                                                break;
+                                                case 2:
+                                                    System.out.println("update harga beli (kulaan) : ");
+                                                    hargabeli=Double.parseDouble(br.readLine());
+                                                    barang.elementAt(idk).sethargabeli(hargabeli);
+                                                break;
+                                                case 3:
+                                                    System.out.println("update harga jual : ");
+                                                    hargajual=Double.parseDouble(br.readLine());
+                                                    barang.elementAt(idk).sethargajual(hargajual);
+                                                break;
+                                            }    
+                                            }while(pilihan4<4);
+                                            System.out.println("Berhasil Disimpan");
+                                             }
+                                             System.out.print("Update Barang lagi ? (Y/N) : ");
+                                             jawab = br.readLine();
+                                            }while(!jawab.equalsIgnoreCase("n"));
+                                            ulang=0;
+                                            
+                                            
+                                            
+                                            
+                                        break;
+                                        case 3:
+                                            //Peghapusan Data Barang
+                                            do{
+                                            do{
+                                            index=0;
+                                            error=1;
+                                            ulang=5;
+                                            String nmbarang="";
+                                            
+                                            idk = barang.size()+1;
+                                            System.out.println("Masukkan nama barang yang ingin dihapus :");
+                                            namabarang=br.readLine();
+                                            for(int j=0;j<barang.size();j++)
+                                            {
+                                                 if(namabarang.equalsIgnoreCase(barang.elementAt(j).getnama()))
+                                                {
+                                                idk = j;
+                                                error=1;
+                                                ulang=5;
+                                                }      
+                                            }
+                                             if(error==0) {
+                                             System.out.println("Nama barang yang Anda Masukkan Tidak Ada");
+            }
+                                            }while(ulang!=5);
+                                            if(error==1)
+                                            {
+                                            System.out.println("Nama Barang yang akan dihapus adalah "+barang.elementAt(idk).getnama());
+                                            System.out.println("Apakah anda yakin (Y/N) :");
+                                            jawab=br.readLine();
+                                            if(jawab.equalsIgnoreCase("Y"))
+                                            {
+                                                barang.removeElementAt(index);
+                                            }
+                                            }
+                                             System.out.println("Hapus barang lagi (Y/N):");
+                                            jawab=br.readLine();
+                                            
+                                            
+                                            }while(!jawab.equalsIgnoreCase("n"));
+                                             ulang=0;
+                                        break;
+                                        
+                                        case 4:
+                                             //Lihat Data Barang
+                                             System.out.println("ID\t\tNama Barang\tStock\tHarga Beli(kulaan)\tHarga Jual\tkeuntungan");
+                                             for(int k=0;k<barang.size();k++){
+                                             
+                                             System.out.println("B61900-"+barang.elementAt(k).getIdBarang()+"\t"+barang.elementAt(k).getnama()+"\t"+(barang.elementAt(k).getstock())+"\t"+barang.elementAt(k).gethargabeli()+"\t\t\t"+barang.elementAt(k).gethargajual()+"\t\t"+(+barang.elementAt(k).gethargajual()-barang.elementAt(k).gethargabeli()));
+                                                }
+                                        break;
+                                        default:break;
+                                    }
+                                    
+                                    }while(pilihan1<5);
+                                
+                            break;
+                                
+                            case 3:
+                                //Keuntungan Harian
+                                for(int w=0;w<transaksi.size();w++)
+                                {
+                                    System.out.println("-----------------------------------------------------");
+                                System.out.println("Order No.          : "+ transaksi.elementAt(w).getIdtransaksi());
+                                System.out.println("Id Login           : "+user);
+                                System.out.println("Tanggal&waktu      : "+ transaksi.elementAt(w).getTglTr());
+                                System.out.println("-----------------------------------------------------");
+                                System.out.println();
+                                System.out.println("ID\tNama Barang\t\tHarga\tJumlah\tTotal");
+                                
+                                for(int x=0;x<dtransaksi.size();x++){
+                                if(dtransaksi.elementAt(x).getIdDtransaksi()==transaksi.elementAt(w).getIdtransaksi()){
+                                System.out.println(dtransaksi.elementAt(x).getIdBarang()+"\t"+dtransaksi.elementAt(x).getNamabarang()+"\t\t"+dtransaksi.elementAt(x).getHargabarang()+"\t"+dtransaksi.elementAt(x).getJumlah()+"\t"+dtransaksi.elementAt(x).getSubDtransaksi());
+                                totalDtransaksi+=dtransaksi.elementAt(x).gettotalDtransaksi();
+                                totalbarang+=dtransaksi.elementAt(x).getJumlah();
+                                keuntungan += (dtransaksi.elementAt(x).getHargabarang()-dtransaksi.elementAt(x).getBelibarang())*dtransaksi.elementAt(x).getJumlah();
+
+                                }
+                              }
+                                totaltransaksi+=totalDtransaksi;
+                                System.out.println("Total transaksi       : " +totalDtransaksi);
+                                totalharian+=keuntungan;
+                                System.out.println("Jumlah Barang terjual : "+totalbarang);
+                                totalbarang2+=totalbarang;
+                                System.out.println("Keuntungan Order No.  : "+transaksi.elementAt(w).getIdtransaksi() +" adalah  "+ keuntungan);
+                                keuntungan=0.0;
+                                totalDtransaksi=0.0;
+                                totalbarang=0.0;
+                                System.out.println();
+                                System.out.println();
+                                }
+                            System.out.println("-------------------------------------");
+                            System.out.println("Total Transaksi              : Rp. "+totaltransaksi);
+                            System.out.println("Total Barang Terjual         : " +totalbarang2);
+                            System.out.println("Total Keuntungan Harian      : Rp. " + totalharian);
+                            System.out.println("-------------------------------------");
+                            totaltransaksi=0.0;
+                            totalbarang2=0.0;
+                            totalharian=0.0;
+                   
+                                 
+                                
+                                break;
+                            default:break;
+   }
+   }
+   while(pilihan < 4);
+   }
+   //kerangka program Penjualan
+   /* Login
+         * Transaksi
+                    *Pencarian
+                    * kode
+                    * nama
+         * Mantenance Barang
+                    * Tambah Barang
+                                * nama barang 
+                                * Stok
+                                * harga kulaan
+                                * harga beli
+                                * Disimpan
+                    * Update Barang
+                                *nama barang
+                                * Stok
+                                * harga kulaan
+                                * harga beli
+                                * disimpan
+                    * Hapus Barang
+                                *Barang yang akan dihapus    
+                    * Lihat Barang
+         *      Lihat Omset
+         */
+        
+    }
+    
+}
+
